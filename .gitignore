@@ -1,0 +1,10 @@
+# Microsoft Office temporary files
+~$*.xlsx
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Keep the uncompressed local source outside Git history.
+data/raw/aidso-results-v2-updated.txt

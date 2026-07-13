@@ -1,0 +1,3 @@
+# Dataset archives and Excel workbooks are binary files.
+*.zip binary
+*.xlsx binary
