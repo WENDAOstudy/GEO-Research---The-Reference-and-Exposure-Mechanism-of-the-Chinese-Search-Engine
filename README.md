@@ -1,77 +1,105 @@
-# AIDSO Results Dataset v2
+# CN-GEO Citation Dataset
 
-本仓库用于发布 AIDSO 结果数据及其更新明细。仓库仅包含数据与配套文档，不包含程序代码。
+[![Records](https://img.shields.io/badge/records-214%2C119-2563eb)](data/statistics.json)
+[![Format](https://img.shields.io/badge/format-JSONL-0f766e)](schema/record.schema.json)
+[![Version](https://img.shields.io/badge/version-2.0.0-7c3aed)](CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-CC%20BY%204.0-d97706)](LICENSE.md)
 
-## 文件结构
+**A structured citation corpus for studying reference selection and source exposure across Chinese generative search platforms.**
+
+[English](README.md) · [简体中文](README.zh-CN.md)
+
+## Overview
+
+CN-GEO Citation Dataset contains citation and retrieval-result records associated with benchmark prompts across 12 platform codes. The release converts the original block-delimited text into standards-compliant UTF-8 JSON Lines, organizes records by research dimension and subcategory, and provides reproducible metadata, validation rules, checksums, and quality notes.
+
+### At a glance
+
+| Metric | Value |
+|---|---:|
+| Citation records | 214,119 |
+| Non-null prompt IDs | 609 |
+| Platform codes | 12 |
+| Top-level dimensions | 7 |
+| Dimension/subcategory pairs | 32 |
+| JSONL shards | 64 |
+| Largest shard | 7.31 MiB |
+
+## Repository layout
 
 ```text
 .
-├── README.md
-├── SHA256SUMS.txt
-├── .gitattributes
-├── .gitignore
+├── README.md                    # English landing page
+├── README.zh-CN.md              # Chinese landing page
+├── CITATION.cff                 # Citation metadata
+├── CHANGELOG.md                 # Release history
+├── CHECKSUMS.sha256             # Integrity checks
+├── LICENSE.md                   # Dataset license and third-party notice
 ├── data/
-│   ├── raw/
-│   │   └── aidso-results-v2-updated.zip
-│   └── updates/
-│       └── answer-level-1-updated.xlsx
-└── docs/
-    ├── field-dictionary.xlsx
-    └── publishing-checklist.md
+│   ├── manifest.json            # Machine-readable file index
+│   ├── statistics.json          # Dataset-level statistics
+│   ├── README.md                # Data access guide
+│   └── records/
+│       └── <dimension>/<subcategory>/part-*.jsonl
+├── docs/
+│   ├── DATA_CARD.md
+│   ├── DATA_DICTIONARY.md
+│   └── QUALITY_REPORT.md
+├── examples/sample.jsonl
+└── schema/record.schema.json
 ```
 
-## 数据文件
+## Data organization
 
-| 文件 | 格式 | 记录数 | `prompt_id` 数量 | 说明 |
-|---|---:|---:|---:|---|
-| `data/raw/aidso-results-v2-updated.zip` | ZIP（内含 UTF-8 文本） | 214,119 | 610 | 完整结果明细；按 `prompt_id` 替换更新内容后的主文件 |
-| `data/updates/answer-level-1-updated.xlsx` | XLSX | 15,771 | 40 | 40 个更新问题的引用/检索结果明细 |
-| `docs/field-dictionary.xlsx` | XLSX | — | — | 文件概览、字段定义和使用建议 |
+Records are grouped by `layer` and `subcat`. Each category is split into shards of at most 5,000 records, preserving source order within that category.
 
-## 主文件格式
+| Dimension (`layer`) | Directory | Records |
+|---|---|---:|
+| 极端与真实场景 | `edge-real-world` | 68,089 |
+| 提问属性 | `query-intent` | 51,201 |
+| 行业维度 | `industry` | 37,528 |
+| 提示风格 | `prompt-style` | 19,996 |
+| 时间敏感度 | `time-sensitivity` | 18,653 |
+| 触发强度 | `trigger-intensity` | 14,219 |
+| 未分类 | `uncategorized` | 4,433 |
 
-解压 `aidso-results-v2-updated.zip` 后可得到 `aidso-results-v2-updated.txt`。文本保留原始 UTF-8 格式。每个记录块包含一条引用或检索结果明细，记录块之间使用两个空行分隔。
+The complete category-to-file mapping, record counts, byte sizes, and SHA-256 hashes are available in [`data/manifest.json`](data/manifest.json).
 
-请注意：`snippet` 等长文本字段中可能包含单个换行，因此不能简单地按“一行一条记录”读取。读取时应以两个空行为记录边界，并保留记录块内部的换行。
+## Record format
 
-## 字段
+Each line is an independent JSON object validated against [`schema/record.schema.json`](schema/record.schema.json). The release preserves the 12 source fields and adds two derived fields:
 
-两个数据文件使用同一套 12 个字段：
+- `record_id`: stable source-order identifier, such as `cngeo-000000001`.
+- `record_hash`: SHA-256 hash of the normalized 12-field source record.
 
-| 字段 | 含义 |
-|---|---|
-| `prompt` | 原始问题文本 |
-| `platform_code` | 平台、渠道或模型代码 |
-| `quote_url` | 引用网址 |
-| `quote_title` | 引用标题 |
-| `site_name` | 来源网站、应用或平台名称 |
-| `quote_index` | 当前回答或检索结果中的引用序号 |
-| `published_at` | 来源内容的发布日期或时间 |
-| `domain` | 来源域名 |
-| `snippet` | 引用正文、摘要或检索片段 |
-| `prompt_id` | 问题分组标识；不是行级唯一键 |
-| `layer` | 一级分类 |
-| `subcat` | 二级分类 |
+See [`docs/DATA_DICTIONARY.md`](docs/DATA_DICTIONARY.md) for field definitions and [`examples/sample.jsonl`](examples/sample.jsonl) for examples.
 
-更完整的类型、空值规则、示例和注意事项见 `docs/field-dictionary.xlsx`。
+## Quick start
 
-## 数据使用注意事项
+```python
+import json
+from pathlib import Path
 
-- 同一个 `prompt_id` 通常对应多个平台和多条引用记录，不能将其视为行级唯一键。
-- `quote_url`、`published_at`、`domain` 和 `snippet` 等字段允许为空。
-- 日期字段可能为空或格式不统一，分析前应先标准化。
-- 去重时应根据具体用途组合使用 `prompt_id`、`platform_code`、`quote_url` 和 `quote_index`。
-- `SHA256SUMS.txt` 提供文件校验值，可用于检查下载或移动后文件是否完整。
+for path in Path("data/records").rglob("*.jsonl"):
+    with path.open(encoding="utf-8") as stream:
+        for line in stream:
+            record = json.loads(line)
+```
 
-## 数据下载
+## Data quality
 
-主数据以 ZIP 压缩包形式存储，可通过普通 Git 克隆或从 GitHub 仓库页面直接下载。解压后请使用 `SHA256SUMS.txt` 中提供的压缩包校验值核对文件完整性。
+All 214,119 source records were parsed successfully. Exact duplicates are retained to preserve the original research population. Missing values, URL diagnostics, duplicate counts, and known limitations are documented in [`docs/QUALITY_REPORT.md`](docs/QUALITY_REPORT.md).
 
-## 许可证与权利说明
+## Citation
 
-本数据集尚未指定开放数据许可证。数据中包含第三方网页标题、链接和正文片段；公开发布前，请确认数据采集、存储和再分发符合来源网站条款、著作权要求及适用的数据保护规则。完成权属确认后，再选择适合的数据许可证，并在仓库根目录添加 `LICENSE` 文件。
+If you use this dataset, cite the repository metadata in [`CITATION.cff`](CITATION.cff):
 
-## 版本
+> WENDAOstudy. *CN-GEO Citation Dataset*. Version 2.0.0, 2026.
 
-- 数据版本：v2 updated
-- 文档整理日期：2026-07-13
+## License and responsible use
+
+The dataset structure, annotations, and documentation are released under [CC BY 4.0](LICENSE.md). Quoted titles, URLs, and excerpts may remain subject to their original publishers' rights. Users are responsible for complying with applicable terms, copyright requirements, privacy rules, and research-ethics standards.
+
+## Project URL
+
+`https://github.com/WENDAOstudy/cn-geo-citation-dataset`

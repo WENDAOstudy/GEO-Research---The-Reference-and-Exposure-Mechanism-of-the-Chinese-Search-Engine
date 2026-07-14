@@ -1,10 +1,15 @@
-# Microsoft Office temporary files
-~$*.xlsx
-
-# Operating-system metadata
 .DS_Store
 Thumbs.db
 desktop.ini
+__pycache__/
+*.py[cod]
+.venv/
+.idea/
+.vscode/
 
-# Keep the uncompressed local source outside Git history.
+# Legacy source files retained locally during migration
 data/raw/aidso-results-v2-updated.txt
+data/raw/aidso-results-v2-updated.zip
+data/updates/
+docs/field-dictionary.xlsx
+docs/publishing-checklist.md

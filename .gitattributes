@@ -1,3 +1,5 @@
-# Dataset archives and Excel workbooks are binary files.
-*.zip binary
-*.xlsx binary
+*.json text eol=lf
+*.jsonl text eol=lf
+*.md text eol=lf
+*.cff text eol=lf
+*.sha256 text eol=lf

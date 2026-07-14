@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/WENDAOstudy/cn-geo-citation-dataset/blob/main/schema/record.schema.json",
+  "title": "CN-GEO Citation Record",
+  "description": "One citation or retrieval result associated with a benchmark prompt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "prompt",
+    "platform_code",
+    "quote_url",
+    "quote_title",
+    "site_name",
+    "quote_index",
+    "published_at",
+    "domain",
+    "snippet",
+    "prompt_id",
+    "layer",
+    "subcat",
+    "record_hash"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "pattern": "^cngeo-[0-9]{9}$"
+    },
+    "prompt": {
+      "type": "string"
+    },
+    "platform_code": {
+      "type": "string"
+    },
+    "quote_url": {
+      "type": "string"
+    },
+    "quote_title": {
+      "type": "string"
+    },
+    "site_name": {
+      "type": "string"
+    },
+    "quote_index": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ],
+      "description": "Numeric position or a platform-specific composite position such as web_search:1#0."
+    },
+    "published_at": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "snippet": {
+      "type": "string"
+    },
+    "prompt_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "layer": {
+      "type": "string"
+    },
+    "subcat": {
+      "type": "string"
+    },
+    "record_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

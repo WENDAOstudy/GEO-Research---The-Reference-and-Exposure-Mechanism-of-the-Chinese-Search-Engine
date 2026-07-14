@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it using the metadata below."
+title: "CN-GEO Citation Dataset"
+type: dataset
+authors:
+  - name: "WENDAOstudy"
+version: 2.0.0
+date-released: 2026-07-14
+repository-code: "https://github.com/WENDAOstudy/cn-geo-citation-dataset"
+url: "https://github.com/WENDAOstudy/cn-geo-citation-dataset"
+license: CC-BY-4.0
+keywords:
+  - generative engine optimization
+  - citation analysis
+  - source exposure
+  - Chinese search
+  - retrieval dataset

@@ -1,3 +1,0 @@
-e031a981ce50becbf32dc4a8f5dd0071060bebb01d707d3118fdba494333a8d1  data/raw/aidso-results-v2-updated.zip
-a41b75314919ddbec54113427331cf438200c019fba9f4ebb43e4b17fac8f401  data/updates/answer-level-1-updated.xlsx
-65c4f62fbcc1fe2e8aa4c250db92e79650e842d4762f0bc15cda067e6bf3cb87  docs/field-dictionary.xlsx
